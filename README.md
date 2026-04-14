@@ -1,88 +1,103 @@
-
-# CFMS: Towards Explainable and Fine-Grained Chinese Multimodal Sarcasm Detection Benchmark
-
-> **Abstract:** Multimodal sarcasm detection (MSD) has progressed significantly, yet existing benchmarks suffer from coarse-grained annotations and limited cultural coverage. To address this, we introduce **CFMS**, the first fine-grained multimodal sarcasm dataset tailored for Chinese social media. It features a triple-level annotation framework (identification, target recognition, and explanation) to support interpretable reasoning. Furthermore, we propose **Policy-Guided Demonstration Selection (PGDS)**, a reinforcement learning-augmented In-Context Learning strategy to optimize exemplar selection for MLLMs.
+# CFMS: An Explainable Fine-Grained Chinese Multimodal Sarcasm Detection Benchmark
+A high-quality benchmark for **interpretable multimodal sarcasm understanding** on Chinese social media, with triple-level annotations and a reinforcement learning-based in-context learning method.
 
 ---
 
-## 🔔 News
-* **[2026-01-06]** Code and Data are released.
+## 📢 Updates
+- **Jan 2026**: Dataset, code and evaluation scripts are publicly released.
 
 ---
 
-## 📖 Introduction
+## 📌 Overview
+Sarcasm is a complex rhetorical phenomenon where literal semantics contradict the actual intent, widely used in social media. In multimodal scenarios, sarcasm is often expressed through **text-image semantic conflicts**.
 
-Sarcasm is a sophisticated linguistic phenomenon where literal meanings deviate from true intents. In the multimodal era, this often manifests through conflict between text and imagery. Existing datasets often overlook unique Chinese sarcastic forms (e.g., “阴阳怪气”) and lack fine-grained reasoning annotations.
+Existing multimodal sarcasm detection (MSD) benchmarks are mostly English-centric, with coarse-grained annotations and poor coverage of Chinese-specific sarcastic expressions (e.g., implicit satire, passive-aggressive rhetoric).
 
-**CFMS** addresses these gaps by shifting focus from simple classification to deep interpretation.
-
-**[IMAGE PLACEHOLDER 1]**
-
-
-## 📂 The CFMS Dataset
-
-CFMS is constructed from real-world Chinese social media, focusing on high-quality image-text pairs with strong semantic correlations.
-
-### Key Statistics
-
-* 
-**Total Samples:** 2,796 high-quality image-text pairs.
-
-
-* **Annotation Granularity:** Triple-level framework (Identification, Target Recognition, Explanation Generation).
-* 
-**Quality Control:** Human-in-the-loop pipeline with GPT-4o pre-annotation and expert verification.
-
-
-
-### Data Examples
-
-**[IMAGE PLACEHOLDER 2]**
-
-
-### Comparison with Existing Datasets
-
-We also curated a high-consistency parallel **Chinese-English metaphor subset** (200 entries each) to facilitate cross-lingual semantic studies.
+**CFMS** is a **fine-grained Chinese multimodal sarcasm dataset** built from real-world social media content. It moves beyond binary classification and enables **interpretable sarcasm reasoning** via a structured annotation pipeline.
 
 ---
 
-## 🚀 Methodology: PGDS
+## 📂 Dataset Details
+CFMS consists of **2,796 high-quality image-text pairs** with rigorous data cleaning and human-machine collaborative annotation.
 
-To overcome the limitations of traditional similarity-based retrieval in In-Context Learning (ICL), we propose **Policy-Guided Demonstration Selection (PGDS)**.
+### Core Features
+- **Triple-level Annotation Framework**
+  1. Sarcasm Identification (binary classification)
+  2. Sarcasm Target Recognition (entity localization)
+  3. Sarcasm Explanation Generation (rhetorical mechanism interpretation)
+- **High Annotation Quality**: Human-in-the-loop verification with GPT-4o pre-labeling, substantial inter-annotator agreement (Kappa=0.69)
+- **Standard Split**: Train (1,956) / Validation (420) / Test (420)
+- **Cross-lingual Subset**: 200 Chinese-English parallel metaphor-sarcasm samples for cross-cultural research
 
-**[IMAGE PLACEHOLDER 3]**
+### Sarcasm Target Categories
+Social phenomena (41%), individual behavior (23%), interpersonal relations (17%), institutional rules (12%), others (7%)
 
+---
 
-### Core Mechanism
+## 🚀 Method: PGDS (Policy-Guided Demonstration Selection)
+Traditional similarity-based retrieval for in-context learning (ICL) fails to capture deep semantic conflicts in sarcasm.
 
-PGDS uses a lightweight policy network  to dynamically optimize the selection of in-context exemplars. The optimization is driven by a multi-dimensional reward function:
+**PGDS** is a **reinforcement learning-augmented ICL strategy** that dynamically selects optimal in-context exemplars **without model fine-tuning**.
 
-This allows the model to select examples that improve reasoning chains rather than just surface-level similarity.
+### Key Mechanism
+1. Multimodal encoding with BGE (text) and CLIP (image)
+2. Top-50 candidate retrieval via cosine similarity
+3. Lightweight MLP policy network for probability-based exemplar sampling
+4. Multi-dimensional reward optimization (classification, target recognition, explanation quality)
+5. Policy update with REINFORCE algorithm
 
+### Advantages
+- Model-agnostic, plug-and-play for all multimodal large language models (MLLMs)
+- Outperforms random retrieval and RAG-based ICL
+- Excels at metaphorical and culturally-grounded sarcasm reasoning
 
-
+---
 
 ## 📊 Experimental Results
+PGDS consistently achieves state-of-the-art performance on mainstream open-source MLLMs under 1-shot settings.
 
-Our extensive experiments show that PGDS significantly outperforms random and RAG-based 1-shot baselines, bridging the gap between zero-shot and fine-tuning approaches.
+| Model | Method | Accuracy | F1-Score | Target Accuracy |
+| :--- | :--- | :--- | :--- | :--- |
+| Qwen2.5-VL-7B-Instruct | RAG 1-shot | 76.88 | 76.13 | 45.67 |
+| | **PGDS (Ours)** | **78.01** | **76.34** | **48.68** |
+| InternVL2.5-8B | RAG 1-shot | 71.05 | 75.47 | 46.15 |
+| | **PGDS (Ours)** | **74.76** | **76.13** | **50.89** |
 
-**[IMAGE PLACEHOLDER 4]**
-
-
-| Model | Method | Accuracy | F1 | Target Acc |
-| --- | --- | --- | --- | --- |
-| **Qwen2.5-VL** | RAG 1-shot | 76.88 | 76.13 | 45.67 |
-|  | **PGDS (Ours)** | **78.01** | **76.34** | **48.68** |
-| **InternVL2.5** | RAG 1-shot | 71.05 | 75.47 | 46.15 |
-|  | **PGDS (Ours)** | **74.76** | **76.13** | **50.89** |
-| <br>(Selected results from the paper )
-
- |  |  |  |  |
+### Key Findings
+1. Metaphor recognition is significantly more challenging than sarcasm detection
+2. Chinese-native MLLMs outperform general closed-source models on local rhetorical understanding
+3. Sarcasm target localization remains the core bottleneck for current models
 
 ---
 
-## 🎨 AI-Generated Sarcasm
+## 🎨 Sarcasm-Aware AIGC
+The fine-grained explanation annotations in CFMS can serve as structured prompts for text-to-image models.
+- **76% success rate** in generating images with explicit sarcastic intent
+- Enables controllable and interpretable sarcastic content generation
 
-We also explore using CFMS explanations as prompts for Text-to-Image models. The fine-grained explanations effectively guide AI in generating images with explicit sarcastic intent.
+---
 
-**[IMAGE PLACEHOLDER 5]**
+## 🛠️ Quick Start
+### Installation
+```bash
+git clone https://anonymous.4open.science/r/CFMS-E8F9.git
+cd CFMS
+pip install -r requirements.txt
+```
+
+### Evaluation
+```bash
+# Run PGDS on InternVL2.5-8B
+python eval_pgds.py --model internvl2.5 --split test
+
+# Zero-shot baseline evaluation
+python eval_baseline.py --model qwen2.5-vl --mode zero_shot
+```
+
+---
+
+## ✨ Highlights
+1. **Chinese-Centric**: Covers unique implicit sarcasm in Chinese social media
+2. **Interpretable**: Triple annotations for full-stack sarcasm understanding
+3. **Efficient**: PGDS boosts MLLM performance without fine-tuning
+4. **Multifunctional**: Supports detection, reasoning and controllable generation
