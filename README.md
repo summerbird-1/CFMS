@@ -77,25 +77,6 @@ The fine-grained explanation annotations in CFMS can serve as structured prompts
 
 ---
 
-## 🛠️ Quick Start
-### Installation
-```bash
-git clone https://anonymous.4open.science/r/CFMS-E8F9.git
-cd CFMS
-pip install -r requirements.txt
-```
-
-### Evaluation
-```bash
-# Run PGDS on InternVL2.5-8B
-python eval_pgds.py --model internvl2.5 --split test
-
-# Zero-shot baseline evaluation
-python eval_baseline.py --model qwen2.5-vl --mode zero_shot
-```
-
----
-
 ## ✨ Highlights
 1. **Chinese-Centric**: Covers unique implicit sarcasm in Chinese social media
 2. **Interpretable**: Triple annotations for full-stack sarcasm understanding
